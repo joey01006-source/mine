@@ -1,76 +1,46 @@
-# Voxel terrain
+# Rust voxel terrain
 
-A dependency-free C++17 terrain generator with seeded hills, layered grass/dirt/stone,
-sandy shores, water, and trees. Only exposed block faces are exported.
+Minecraft-style terrain generation in Rust: seeded hills, grass, dirt, stone,
+water, sandy shores, and trees. No third-party Rust dependencies. Exports only
+exposed block faces and includes an offline 3D browser viewer.
 
-## Run in VS Code
+## Windows / VS Code
 
-1. Install a C++ compiler (see below). VS Code itself does not include one.
-2. Open the **mine folder** with **File → Open Folder**, so `.vscode/tasks.json`
-   is part of your workspace. Trust the folder if you trust this source code.
-3. Press **Ctrl+Shift+B** (**Cmd+Shift+B** on macOS). The included task compiles
-   `hi.c++` and runs the generator. You can also choose **Terminal → Run Task →
-   Voxel: build and generate world**.
-4. Open the generated **world.html** in your web browser using your file manager.
-   Drag to orbit and scroll to zoom. VS Code's text editor displays HTML source;
-   the browser displays the terrain.
+1. Install Rust using [rustup](https://rustup.rs/). Use the default Windows MSVC
+   toolchain. If prompted, install **Visual Studio Build Tools** with **Desktop
+   development with C++** (including the Windows SDK) for the system linker.
+   This Rust project does not use the Microsoft C/C++ VS Code extension.
+2. Fully restart VS Code. In its terminal, check `cargo --version` and `rustc --version`.
+3. Open the entire **mine folder**. Install **rust-analyzer** (`rust-lang.rust-analyzer`)
+   for Rust editing support.
+4. Press **Ctrl+Shift+B**, or choose **Terminal → Run Task → Voxel: run Rust terrain generator**.
+   Cargo compiles the program automatically before running it.
+5. Open the generated **world.html** in a WebGL-capable browser using your file
+   manager. Drag to orbit; scroll to zoom. Opening it in VS Code displays its source.
 
-The generator exits after writing its files. It does not open a native game window.
-The message **"The executable you want to run does not (yet) exist"** means the
-editor tried to launch the program before it was compiled, or used the wrong path.
-This project now includes a launch configuration that builds `hi.c++` first and
-runs the resulting `voxel.exe` on Windows.
+If you get an old executable-not-found message, choose the Cargo task above rather
+than an old C++ debug configuration. The previous C++ source and launch setup have
+been removed. If `cargo` is not recognized, install Rust and restart VS Code. A
+`link.exe` error means the MSVC Build Tools/linker prerequisite is missing.
 
-For the **Run and Debug** button or **F5** on Windows:
+## Terminal usage
 
-1. Install Microsoft's **C/C++** VS Code extension (`ms-vscode.cpptools`).
-2. Install the compiler and GDB debugger described below, then restart VS Code.
-3. In **Run and Debug**, select **Voxel: build and run C++**, then press **F5**.
-   Its `preLaunchTask` builds the executable automatically. If compilation fails,
-   fix the terminal error rather than choosing **Debug Anyway**.
-
-**Ctrl+Shift+B** builds and generates the world without needing GDB. Use this
-route if you only want to view terrain. The generated `world.html` still needs
-to be opened in a browser.
-
-### Install a compiler
-
-- **Windows:** Install [MSYS2](https://www.msys2.org/), open its **UCRT64** terminal,
-  and run `pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb`. Add the installation's
-  `ucrt64\bin` directory (normally `C:\msys64\ucrt64\bin`) to your Windows user
-  **Path**, then fully restart VS Code. Run `g++ --version` in a new VS Code terminal
-  to confirm it is available. For F5, also check `gdb --version`. The task uses
-  this compiler to create `voxel.exe` in the project folder.
-- **macOS:** Run `xcode-select --install` in Terminal. After installation,
-  `clang++ --version` should work; the macOS task uses `clang++`.
-- **Ubuntu/Debian Linux:** Run `sudo apt update` then `sudo apt install build-essential`.
-  Confirm `g++ --version` works in VS Code's terminal.
-
-If the task reports that `g++` cannot be found, the compiler is missing or its
-directory is absent from the Path inherited by VS Code. If no Voxel task is listed,
-open the repository folder rather than just `hi.c++`.
-
-## Run from a terminal
-
-From the repository folder on Linux/macOS:
+From the repository folder, on Windows, macOS, or Linux with Rust installed:
 
 ```sh
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic hi.c++ -o voxel
-./voxel 42 48 world
+cargo run --release --locked -- 42 48 world
 ```
 
-On Windows, with the compiler above installed, use PowerShell:
+Arguments after `--`: `[seed] [width] [output prefix]`. Defaults: `42`, `48`, `world`.
+Seeds range from 0 to 4294967295; width from 16 to 128 blocks. Height is 48 blocks.
+The output directory must exist. Reusing a prefix overwrites its generated files.
 
-```powershell
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic hi.c++ -o voxel.exe
-.\voxel.exe 42 48 world
-```
+Outputs:
 
-Open `world.html` in a WebGL-capable browser. Drag to orbit and scroll to zoom.
-The viewer is self-contained and works offline. Import `world.obj` into a 3D
-editor with `world.mtl` alongside it to retain block colors.
+- `world.html`: self-contained, interactive 3D viewer; no server or downloads needed.
+- `world.obj` and `world.mtl`: terrain mesh and colors for a 3D editor.
 
-Arguments: `voxel [seed] [width] [output prefix]`. Defaults: `42`, `48`, `world`.
-Seeds range from 0 to 4294967295; width ranges from 16 to 128 blocks. The world is
-48 blocks tall. The output directory must already exist. Reusing a prefix replaces
-its generated files. This is a terrain viewer, without player movement or block editing.
+The generator exits after writing files. It does not launch a native game window;
+this is terrain generation and viewing, without player movement or block editing.
+
+Run the Rust tests with `cargo test --locked`.
