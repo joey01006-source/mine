@@ -2,17 +2,49 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Voxel: run Rust terrain generator",
+      "label": "Voxel: build",
       "type": "process",
-      "command": "cargo",
+      "command": "g++",
       "args": [
-        "run",
-        "--release",
-        "--locked",
-        "--",
-        "42",
-        "48",
-        "world"
+        "-std=c++17",
+        "-g",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "${workspaceFolder}/hi.c++",
+        "-o",
+        "${workspaceFolder}/voxel"
+      ],
+      "windows": {
+        "args": [
+          "-std=c++17",
+          "-g",
+          "-O2",
+          "-Wall",
+          "-Wextra",
+          "-pedantic",
+          "${workspaceFolder}/hi.c++",
+          "-o",
+          "${workspaceFolder}/voxel.exe"
+        ]
+      },
+      "osx": {
+        "command": "clang++"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Voxel: build and generate world",
+      "type": "shell",
+      "command": "sh",
+      "args": [
+        "${workspaceFolder}/run.sh"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -21,30 +53,16 @@
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [
-        "$rustc"
-      ],
+      "problemMatcher": [],
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
         "clear": true
-      }
-    },
-    {
-      "label": "Voxel: test Rust",
-      "type": "process",
-      "command": "cargo",
-      "args": [
-        "test",
-        "--locked"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
       },
-      "group": "test",
-      "problemMatcher": [
-        "$rustc"
-      ]
+      "windows": {
+        "command": ".\\run.cmd",
+        "args": []
+      }
     }
   ]
 }

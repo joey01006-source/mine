@@ -1,46 +1,61 @@
-# Rust voxel terrain
+# C++ voxel terrain
 
-Minecraft-style terrain generation in Rust: seeded hills, grass, dirt, stone,
-water, sandy shores, and trees. No third-party Rust dependencies. Exports only
-exposed block faces and includes an offline 3D browser viewer.
+Minecraft-style terrain generation in **hi.c++**, with seeded hills, trees, grass,
+dirt, stone, sandy shores, and water. No third-party C++ libraries. Includes an
+interactive offline browser viewer and OBJ export. Rust and Lua are not used.
 
-## Windows / VS Code
+## View it now
 
-1. Install Rust using [rustup](https://rustup.rs/). Use the default Windows MSVC
-   toolchain. If prompted, install **Visual Studio Build Tools** with **Desktop
-   development with C++** (including the Windows SDK) for the system linker.
-   This Rust project does not use the Microsoft C/C++ VS Code extension.
-2. Fully restart VS Code. In its terminal, check `cargo --version` and `rustc --version`.
-3. Open the entire **mine folder**. Install **rust-analyzer** (`rust-lang.rust-analyzer`)
-   for Rust editing support.
-4. Press **Ctrl+Shift+B**, or choose **Terminal → Run Task → Voxel: run Rust terrain generator**.
-   Cargo compiles the program automatically before running it.
-5. Open the generated **world.html** in a WebGL-capable browser using your file
-   manager. Drag to orbit; scroll to zoom. Opening it in VS Code displays its source.
+Open **terrain.html** from Windows File Explorer in Edge, Chrome, or Firefox.
+This included sample needs no compiler or VS Code extensions. Drag to rotate;
+scroll to zoom.
 
-If you get an old executable-not-found message, choose the Cargo task above rather
-than an old C++ debug configuration. The previous C++ source and launch setup have
-been removed. If `cargo` is not recognized, install Rust and restart VS Code. A
-`link.exe` error means the MSVC Build Tools/linker prerequisite is missing.
+## Windows: build and open your world
+
+1. Install [MSYS2](https://www.msys2.org/). Open its **UCRT64** terminal and run:
+   `pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb`
+2. Add `C:\msys64\ucrt64\bin` (or your installation's `ucrt64\bin`) to your Windows
+   user **Path**. Fully restart VS Code.
+3. Double-click **run.cmd**. It compiles `hi.c++`, generates the terrain, and opens
+   **world.html** in your default browser. On failure the window stays open with
+   the error. The launcher also checks MSYS2's default install location.
+
+In VS Code, open the entire **mine folder** and press **Ctrl+Shift+B**. The default
+build task runs the same launcher on Windows. No separate executable has to exist
+before you run it.
+
+For **F5 debugging**, install Microsoft's **C/C++** extension and select
+**Voxel: build and run C++** in Run and Debug. Check `g++ --version` and
+`gdb --version` in the VS Code terminal first. The debugger builds automatically,
+then writes the output files; open `world.html` manually after debugging.
+The extension's license banner is informational. If compilation fails, read the
+terminal error rather than choosing Debug Anyway.
 
 ## Terminal usage
 
-From the repository folder, on Windows, macOS, or Linux with Rust installed:
+Windows PowerShell, from the repository folder:
 
-```sh
-cargo run --release --locked -- 42 48 world
+```powershell
+g++ -std=c++17 -O2 hi.c++ -o voxel.exe
+.\voxel.exe 42 48 world
 ```
 
-Arguments after `--`: `[seed] [width] [output prefix]`. Defaults: `42`, `48`, `world`.
-Seeds range from 0 to 4294967295; width from 16 to 128 blocks. Height is 48 blocks.
+Linux/macOS with a C++17 compiler installed:
+
+```sh
+sh run.sh
+# Or choose a seed, size, and output prefix:
+./voxel 123 64 custom-world
+```
+
+Open the generated HTML in a WebGL-capable browser. The program exits after writing
+files; it does not launch a native game window. This version generates and displays
+terrain, without player movement or block editing.
+
+Arguments: `[seed] [width] [output prefix]`. Defaults: `42`, `48`, `world`.
+Seed range: 0–4294967295. Width: 16–128 blocks. Height: 48 blocks.
 The output directory must exist. Reusing a prefix overwrites its generated files.
+`world.obj` and `world.mtl` can be imported together into a 3D editor.
 
-Outputs:
-
-- `world.html`: self-contained, interactive 3D viewer; no server or downloads needed.
-- `world.obj` and `world.mtl`: terrain mesh and colors for a 3D editor.
-
-The generator exits after writing files. It does not launch a native game window;
-this is terrain generation and viewing, without player movement or block editing.
-
-Run the Rust tests with `cargo test --locked`.
+If you downloaded a ZIP from GitHub, extract it before running. If you use Git,
+update the project with `git pull origin main` before following these instructions.

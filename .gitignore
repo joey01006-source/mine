@@ -1,4 +1,5 @@
-/target/
+/voxel
+/voxel.exe
 /world.html
 /world.obj
 /world.mtl
