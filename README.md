@@ -1,61 +1,42 @@
-# Voxel terrain
+# Lua voxel terrain
 
-A dependency-free C++17 terrain generator with seeded hills, layered grass/dirt/stone,
-sandy shores, water, and trees. Only exposed block faces are exported.
+Minecraft-style terrain generation in **hi.lua**, using Lua 5.3 or newer and no
+external Lua libraries. Generates seeded hills, grass, dirt, stone, sandy shores,
+water, and trees, exporting only exposed block faces.
 
-## Run in VS Code
+## Windows / VS Code
 
-1. Install a C++ compiler (see below). VS Code itself does not include one.
-2. Open the **mine folder** with **File → Open Folder**, so `.vscode/tasks.json`
-   is part of your workspace. Trust the folder if you trust this source code.
-3. Press **Ctrl+Shift+B** (**Cmd+Shift+B** on macOS). The included task compiles
-   `hi.c++` and runs the generator. You can also choose **Terminal → Run Task →
-   Voxel: build and generate world**.
-4. Open the generated **world.html** in your web browser using your file manager.
-   Drag to orbit and scroll to zoom. VS Code's text editor displays HTML source;
-   the browser displays the terrain.
+1. Install Lua 5.3 or newer from a trusted distribution linked at
+   [lua.org](https://www.lua.org/start.html#installing). Add its executable directory
+   to your Windows user **Path**, then fully restart VS Code.
+2. In VS Code's terminal, run `lua -v` to verify the installation. This script uses
+   Lua 5.3 integer/bitwise operations; Lua 5.1, LuaJIT, and Roblox Luau are not supported.
+3. Open the entire **mine folder** in VS Code and press **Ctrl+Shift+B**, or choose
+   **Terminal → Run Task → Voxel: generate world (Lua)**.
+4. Open the generated **world.html** from your file manager in a WebGL-capable
+   browser. Drag to orbit and scroll to zoom. Opening it in the VS Code editor
+   shows its source rather than the terrain.
 
-The generator exits after writing its files. It does not open a native game window.
-Use the build task above to run it; the editor's Run/Debug button may require a
-separate debugger configuration.
-
-### Install a compiler
-
-- **Windows:** Install [MSYS2](https://www.msys2.org/), open its **UCRT64** terminal,
-  and run `pacman -S --needed mingw-w64-ucrt-x86_64-gcc`. Add the installation's
-  `ucrt64\bin` directory (normally `C:\msys64\ucrt64\bin`) to your Windows user
-  **Path**, then fully restart VS Code. Run `g++ --version` in a new VS Code terminal
-  to confirm it is available. The task uses this compiler to create `voxel.exe`.
-- **macOS:** Run `xcode-select --install` in Terminal. After installation,
-  `clang++ --version` should work; the macOS task uses `clang++`.
-- **Ubuntu/Debian Linux:** Run `sudo apt update` then `sudo apt install build-essential`.
-  Confirm `g++ --version` works in VS Code's terminal.
-
-If the task reports that `g++` cannot be found, the compiler is missing or its
-directory is absent from the Path inherited by VS Code. If no Voxel task is listed,
-open the repository folder rather than just `hi.c++`.
-
-## Run from a terminal
-
-From the repository folder on Linux/macOS:
+You can also run directly from the project folder in PowerShell, macOS, or Linux:
 
 ```sh
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic hi.c++ -o voxel
-./voxel 42 48 world
+lua hi.lua 42 48 world
 ```
 
-On Windows, with the compiler above installed, use PowerShell:
+If your Lua executable is named `lua54` or `lua5.4`, use that name instead of `lua`
+and update the task's `command` in `.vscode/tasks.json` accordingly. A Lua editor
+extension provides editing assistance; it does not install the Lua interpreter.
 
-```powershell
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic hi.c++ -o voxel.exe
-.\voxel.exe 42 48 world
-```
+## Outputs and options
 
-Open `world.html` in a WebGL-capable browser. Drag to orbit and scroll to zoom.
-The viewer is self-contained and works offline. Import `world.obj` into a 3D
-editor with `world.mtl` alongside it to retain block colors.
+- `world.html`: self-contained, offline interactive 3D viewer.
+- `world.obj` and `world.mtl`: mesh and colors for importing into a 3D editor.
 
-Arguments: `voxel [seed] [width] [output prefix]`. Defaults: `42`, `48`, `world`.
-Seeds range from 0 to 4294967295; width ranges from 16 to 128 blocks. The world is
-48 blocks tall. The output directory must already exist. Reusing a prefix replaces
-its generated files. This is a terrain viewer, without player movement or block editing.
+Usage: `lua hi.lua [seed] [width] [output prefix]`.
+Defaults: seed `42`, width `48`, prefix `world`. Seeds range from 0 to 4294967295;
+width ranges from 16 to 128. The world is 48 blocks tall. The output directory must
+already exist. Reusing a prefix replaces its files.
+
+The program exits after generating files; it does not open a game window.
+This version provides terrain viewing, without player movement or block editing.
+The previous C++ version has been removed; no C++ compiler is required.

@@ -2,28 +2,28 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Voxel: build",
+      "label": "Voxel: generate world (Lua)",
       "type": "process",
-      "command": "g++",
-      "args": ["-std=c++17", "-O2", "-Wall", "-Wextra", "-pedantic", "${workspaceFolder}/hi.c++", "-o", "${workspaceFolder}/voxel"],
-      "windows": {
-        "args": ["-std=c++17", "-O2", "-Wall", "-Wextra", "-pedantic", "${workspaceFolder}/hi.c++", "-o", "${workspaceFolder}/voxel.exe"]
+      "command": "lua",
+      "args": [
+        "${workspaceFolder}/hi.lua",
+        "42",
+        "48",
+        "world"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
-      "osx": { "command": "clang++" },
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": ["$gcc"]
-    },
-    {
-      "label": "Voxel: build and generate world",
-      "type": "process",
-      "command": "${workspaceFolder}/voxel",
-      "windows": { "command": "${workspaceFolder}/voxel.exe" },
-      "args": ["42", "48", "world"],
-      "dependsOn": "Voxel: build",
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": { "kind": "build", "isDefault": true },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "problemMatcher": [],
-      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
     }
   ]
 }
